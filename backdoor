@@ -1,0 +1,280 @@
+-- Create a LocalScript in StarterPlayerScripts or StarterCharacterScripts
+
+local UserInputService = game:GetService("UserInputService")
+local Players = game:GetService("Players")
+local TeleportService = game:GetService("TeleportService")
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+local RunService = game:GetService("RunService")
+
+local securityGuiVisible = false
+local mainGuiVisible = false
+
+-- Create Security GUI
+local function createSecurityGui()
+    -- Create Security GUI
+    local securityScreenGui = Instance.new("ScreenGui")
+    securityScreenGui.Name = "SecurityGui"
+    securityScreenGui.Parent = playerGui
+
+    local securityFrame = Instance.new("Frame")
+    securityFrame.Size = UDim2.new(0, 400, 0, 200)
+    securityFrame.Position = UDim2.new(0.5, -200, 0.5, -100)
+    securityFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0) -- Black color
+    securityFrame.Parent = securityScreenGui
+
+    local textBox = Instance.new("TextBox")
+    textBox.Size = UDim2.new(1, -20, 0, 50)
+    textBox.Position = UDim2.new(0, 10, 0, 10)
+    textBox.BackgroundColor3 = Color3.fromRGB(169, 169, 169) -- Grey color
+    textBox.TextColor3 = Color3.fromRGB(255, 255, 255) -- White text
+    textBox.TextSize = 18
+    textBox.Text = ""
+    textBox.PlaceholderText = "Enter password"
+    textBox.Font = Enum.Font.SourceSans
+    textBox.Parent = securityFrame
+
+    local confirmButton = Instance.new("TextButton")
+    confirmButton.Size = UDim2.new(1, -20, 0, 50)
+    confirmButton.Position = UDim2.new(0, 10, 0, 70)
+    confirmButton.BackgroundColor3 = Color3.fromRGB(169, 169, 169) -- Grey color
+    confirmButton.TextColor3 = Color3.fromRGB(255, 255, 255) -- White text
+    confirmButton.Text = "Confirm"
+    confirmButton.TextSize = 18
+    confirmButton.Font = Enum.Font.SourceSans
+    confirmButton.Parent = securityFrame
+
+    confirmButton.MouseButton1Click:Connect(function()
+        if textBox.Text == "a2Vd=v21t53wk!fkd3mmm22=mzdl&dss%" then
+            securityScreenGui:Destroy() -- Remove security GUI
+            createGui() -- Open the main GUI
+            mainGuiVisible = true
+        else
+            textBox.Text = "" -- Clear the text box
+            textBox.PlaceholderText = "Incorrect password" -- Show error message
+        end
+    end)
+end
+
+-- Create Main GUI
+local function createGui()
+    -- Remove existing GUI if it exists
+    local existingGui = playerGui:FindFirstChild("MyActionGui")
+    if existingGui then
+        existingGui:Destroy()
+    end
+
+    -- Create GUI
+    local screenGui = Instance.new("ScreenGui")
+    screenGui.Name = "MyActionGui"
+    screenGui.Parent = playerGui
+    screenGui.Enabled = false -- Start with GUI hidden
+
+    -- Main frame
+    local mainFrame = Instance.new("Frame")
+    mainFrame.Size = UDim2.new(0, 300, 1, 0)
+    mainFrame.Position = UDim2.new(0, 0, 0, 0)
+    mainFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0) -- Black color
+    mainFrame.Parent = screenGui
+
+    -- Console frame
+    local consoleFrame = Instance.new("Frame")
+    consoleFrame.Size = UDim2.new(1, 0, 0.3, 0)
+    consoleFrame.Position = UDim2.new(0, 0, 0.7, 0)
+    consoleFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 50) -- Dark grey color
+    consoleFrame.Parent = mainFrame
+
+    -- Console title
+    local consoleTitle = Instance.new("TextLabel")
+    consoleTitle.Size = UDim2.new(1, 0, 0, 30)
+    consoleTitle.Position = UDim2.new(0, 0, 0, 0)
+    consoleTitle.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    consoleTitle.TextColor3 = Color3.fromRGB(255, 255, 255) -- White text
+    consoleTitle.Text = "Console"
+    consoleTitle.TextSize = 18
+    consoleTitle.Font = Enum.Font.SourceSansBold
+    consoleTitle.Parent = consoleFrame
+
+    -- Console text
+    local consoleText = Instance.new("TextLabel")
+    consoleText.Size = UDim2.new(1, -10, 1, -30)
+    consoleText.Position = UDim2.new(0, 5, 0, 30)
+    consoleText.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    consoleText.TextColor3 = Color3.fromRGB(255, 255, 255) -- White text
+    consoleText.TextSize = 14
+    consoleText.TextWrapped = true
+    consoleText.TextYAlignment = Enum.TextYAlignment.Top
+    consoleText.Font = Enum.Font.SourceSans
+    consoleText.Parent = consoleFrame
+
+    -- Scrolling frame
+    local scrollingFrame = Instance.new("ScrollingFrame")
+    scrollingFrame.Size = UDim2.new(1, -20, 0.7, -30)
+    scrollingFrame.Position = UDim2.new(0, 10, 0, 30)
+    scrollingFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0) -- Black color
+    scrollingFrame.ScrollBarThickness = 10
+    scrollingFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+    scrollingFrame.Parent = mainFrame
+
+    -- Create a UIListLayout to arrange buttons
+    local uiListLayout = Instance.new("UIListLayout")
+    uiListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+    uiListLayout.Padding = UDim.new(0, 10)
+    uiListLayout.Parent = scrollingFrame
+
+    -- Function to create buttons
+    local function createButton(name, onClick)
+        local button = Instance.new("TextButton")
+        button.Size = UDim2.new(1, 0, 0, 50)
+        button.BackgroundColor3 = Color3.fromRGB(169, 169, 169) -- Grey color
+        button.TextColor3 = Color3.fromRGB(255, 255, 255) -- White text
+        button.Text = name
+        button.TextSize = 18
+        button.Font = Enum.Font.SourceSans
+        button.Parent = scrollingFrame
+
+        button.MouseButton1Click:Connect(function()
+            onClick()
+            -- Log the button press
+            local time = os.date("%H:%M")
+            consoleText.Text = consoleText.Text .. string.format("%s %s\n", name:upper(), time)
+        end)
+    end
+
+    -- Define functions for button actions
+    local function speedHacks()
+        print("Speed hacks activated.")
+        local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
+        if humanoid then
+            humanoid.WalkSpeed = 100 -- Increase speed to 100 (default is 16)
+        end
+    end
+
+    local function invincibility()
+        print("Invincibility activated.")
+        local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
+        if humanoid then
+            humanoid.MaxHealth = math.huge
+            humanoid.Health = humanoid.MaxHealth
+            humanoid.HealthChanged:Connect(function()
+                humanoid.Health = humanoid.MaxHealth
+            end)
+        end
+    end
+
+    local function esp()
+        print("ESP activated.")
+        -- Highlight other players
+        for _, otherPlayer in ipairs(Players:GetPlayers()) do
+            if otherPlayer.Character then
+                local highlight = Instance.new("Highlight")
+                highlight.Adornee = otherPlayer.Character
+                highlight.Parent = playerGui
+            end
+        end
+    end
+
+    local function wallhacks()
+        print("Wallhacks enabled.")
+        -- Highlight parts through walls
+        for _, part in ipairs(workspace:FindPartsInRegion3(workspace.CurrentCamera.CFrame:ToWorldSpace(workspace.CurrentCamera.CFrame), nil, true)) do
+            part.BrickColor = BrickColor.new("Bright red")
+        end
+    end
+
+    local function flying()
+        print("Flying mode activated.")
+        -- Enable flying by modifying the player's position
+        local character = player.Character
+        local humanoidRootPart = character and character:FindFirstChild("HumanoidRootPart")
+        if humanoidRootPart then
+            local bodyVelocity = Instance.new("BodyVelocity")
+            bodyVelocity.Velocity = Vector3.new(0, 0, 0)
+            bodyVelocity.P = 9e4
+            bodyVelocity.MaxForce = Vector3.new(1e5, 1e5, 1e5)
+            bodyVelocity.Parent = humanoidRootPart
+            
+            -- Update velocity based on player input
+            local function onUpdate()
+                if humanoidRootPart then
+                    local moveDirection = Vector3.new()
+                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
+                        moveDirection = moveDirection + humanoidRootPart.CFrame.LookVector
+                    end
+                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
+                        moveDirection = moveDirection - humanoidRootPart.CFrame.LookVector
+                    end
+                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
+                        moveDirection = moveDirection - humanoidRootPart.CFrame.RightVector
+                    end
+                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
+                        moveDirection = moveDirection + humanoidRootPart.CFrame.RightVector
+                    end
+                    bodyVelocity.Velocity = moveDirection * 50 -- Adjust speed as needed
+                end
+            end
+
+            RunService.RenderStepped:Connect(onUpdate)
+        end
+    end
+
+    local function teleportExternal()
+        print("Teleportation to external game activated.")
+        -- Teleport player to external game
+        TeleportService:Teleport(18629023048, player)
+    end
+
+    local function discordNotification()
+        print("Discord notification activated.")
+        -- Send notification to the player
+        local starterGui = game:GetService("StarterGui")
+        starterGui:SetCore("SendNotification", {
+            Title = "JOIN THE DISCORD",
+            Text = "https://discord.gg/mWDZhtNvXM",
+            Icon = "rbxassetid://8248378219"
+        })
+    end
+
+    -- Create buttons
+    createButton("Speed Hacks", speedHacks)
+    createButton("Invincibility", invincibility)
+    createButton("ESP", esp)
+    createButton("Wallhacks", wallhacks)
+    createButton("Flying", flying)
+    createButton("Teleport to External Game", teleportExternal)
+    createButton("DISCORD", discordNotification)
+
+    -- Toggle GUI with Right Alt
+    local function toggleGui()
+        if securityGuiVisible then
+            -- If the security GUI is visible, do nothing
+            return
+        end
+        mainGuiVisible = not mainGuiVisible
+        screenGui.Enabled = mainGuiVisible
+    end
+
+    -- Make sure to handle UserInputService input correctly
+    UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
+        if gameProcessedEvent then return end
+        if input.KeyCode == Enum.KeyCode.RightAlt then
+            toggleGui()
+        end
+    end)
+end
+
+-- Initialize Security GUI
+createSecurityGui()
+
+-- Recreate GUI on player respawn
+local function onCharacterAdded(character)
+    createGui()
+end
+
+-- Initialize GUI when the script starts (for the initial player load)
+if player.Character then
+    onCharacterAdded(player.Character)
+end
+
+-- Reconnect GUI creation on player respawn
+player.CharacterAdded:Connect(onCharacterAdded)
